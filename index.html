@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PeFi Terminal</title>
+
+  <!-- React -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+  <!-- Babel -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- TradingView -->
+  <script src="https://s3.tradingview.com/tv.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      background: #0A0A0A;
+      color: white;
+      font-family: Arial;
+    }
+
+    /* NAV BAR */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: #111;
+      border-bottom: 1px solid #222;
+    }
+
+    .menu-btn {
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    /* SIDE MENU */
+    .side-menu {
+      position: fixed;
+      top: 0;
+      left: -260px;
+      width: 260px;
+      height: 100%;
+      background: #111;
+      padding: 20px;
+      transition: 0.3s;
+      z-index: 9999;
+    }
+
+    .side-menu.open {
+      left: 0;
+    }
+
+    .menu-item {
+      margin: 15px 0;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .container {
+      padding: 15px;
+      max-width: 500px;
+      margin: auto;
+    }
+
+    h1 {
+      color: #00F0FF;
+      font-size: 18px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(0,255,255,0.2);
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 12px;
+    }
+
+    /* CHART */
+    .chart-wrapper {
+      position: relative;
+      margin-top: 10px;
+    }
+
+    .expand-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #00F0FF;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      z-index: 10;
+    }
+
+    .fullscreen {
+      position: fixed !important;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      z-index: 9999;
+      padding: 10px;
+    }
+
+    .fullscreen #tv_chart {
+      height: 90vh !important;
+    }
+
+    #tv_chart {
+      width: 100%;
+      height: 300px;
+    }
+
+    p {
+      font-size: 14px;
+      margin: 5px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+
+    const { useState, useEffect } = React;
+
+    function Chart() {
+      const [expanded, setExpanded] = useState(false);
+
+      useEffect(() => {
+        const container = document.getElementById("tv_chart");
+        if (container) container.innerHTML = "";
+
+        setTimeout(() => {
+          new TradingView.widget({
+            container_id: "tv_chart",
+            symbol: "BINANCE:BTCUSDT",
+            interval: "15",
+            theme: "dark",
+            width: "100%",
+            height: expanded ? 600 : 300
+          });
+        }, 100);
+      }, [expanded]);
+
+      return (
+        <div className={`chart-wrapper ${expanded ? "fullscreen" : ""}`}>
+          <button className="expand-btn" onClick={() => setExpanded(!expanded)}>
+            {expanded ? "Close" : "Expand"}
+          </button>
+          <div id="tv_chart"></div>
+        </div>
+      );
+    }
+
+    function App() {
+
+      const [menuOpen, setMenuOpen] = useState(false);
+      const [page, setPage] = useState("dashboard");
+      const [data, setData] = useState({});
+
+      useEffect(() => {
+        const interval = setInterval(() => {
+          setData({
+            bestTrade: {
+              symbol: "SOL",
+              confidence: Math.floor(Math.random() * 30) + 60
+            },
+            narrative: "PeFi detects strong bullish momentum forming.",
+          });
+        }, 2000);
+
+        return () => clearInterval(interval);
+      }, []);
+
+      return (
+        <div>
+
+          {/* NAV */}
+          <div className="nav">
+            <span className="menu-btn" onClick={() => setMenuOpen(true)}>☰</span>
+            <h1>🧠 PeFi</h1>
+            <span></span>
+          </div>
+
+          {/* SIDE MENU */}
+          <div className={`side-menu ${menuOpen ? "open" : ""}`}>
+            <h2>Menu</h2>
+
+            <div className="menu-item" onClick={() => {setPage("dashboard"); setMenuOpen(false);}}>Dashboard</div>
+            <div className="menu-item" onClick={() => {setPage("signals"); setMenuOpen(false);}}>Signals</div>
+            <div className="menu-item" onClick={() => {setPage("settings"); setMenuOpen(false);}}>Settings</div>
+          </div>
+
+          {/* CONTENT */}
+          <div className="container">
+
+            {page === "dashboard" && (
+              <>
+                <Chart />
+
+                <div className="card">
+                  <h2>Best Trade</h2>
+                  <p>{data?.bestTrade?.symbol}</p>
+                  <p>{data?.bestTrade?.confidence}%</p>
+                </div>
+
+                <div className="card">
+                  <h2>AI Narrative</h2>
+                  <p>{data?.narrative}</p>
+                </div>
+              </>
+            )}
+
+            {page === "signals" && (
+              <div className="card">
+                <h2>Signals</h2>
+                <p>AI signals will appear here</p>
+              </div>
+            )}
+
+            {page === "settings" && (
+              <div className="card">
+                <h2>Settings</h2>
+                <p>Preferences, alerts, themes</p>
+              </div>
+            )}
+
+          </div>
+
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+
+  </script>
+</body>
+</html>
