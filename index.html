@@ -1,248 +1,275 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PeFi Terminal</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PeFi — Intelligence That Executes</title>
 
-  <!-- React -->
-  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<style>
+body {
+  margin:0;
+  background:#050505;
+  font-family:Arial;
+  color:#fff;
+}
 
-  <!-- Babel -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+/* SIDEBAR */
+.sidebar {
+  width:240px;
+  background:#070b07;
+  height:100vh;
+  position:fixed;
+  padding:20px;
+  border-right:1px solid #00ff88;
+}
 
-  <!-- TradingView -->
-  <script src="https://s3.tradingview.com/tv.js"></script>
+.logo {
+  color:#00ff88;
+  font-size:22px;
+  margin-bottom:5px;
+}
 
-  <style>
-    body {
-      margin: 0;
-      background: #0A0A0A;
-      color: white;
-      font-family: Arial;
-    }
+.slogan {
+  font-size:11px;
+  opacity:0.6;
+  margin-bottom:20px;
+}
 
-    /* NAV BAR */
-    .nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px;
-      background: #111;
-      border-bottom: 1px solid #222;
-    }
+.menu-item {
+  margin:14px 0;
+  color:#aaa;
+  cursor:pointer;
+}
+.menu-item:hover {
+  color:#00ff88;
+}
 
-    .menu-btn {
-      font-size: 20px;
-      cursor: pointer;
-    }
+/* MAIN */
+.main {
+  margin-left:260px;
+  padding:15px;
+}
 
-    /* SIDE MENU */
-    .side-menu {
-      position: fixed;
-      top: 0;
-      left: -260px;
-      width: 260px;
-      height: 100%;
-      background: #111;
-      padding: 20px;
-      transition: 0.3s;
-      z-index: 9999;
-    }
+/* STATS */
+.stats {
+  display:flex;
+  gap:10px;
+}
+.stat {
+  flex:1;
+  background:#0b0b0b;
+  border:1px solid rgba(0,255,150,0.4);
+  border-radius:10px;
+  padding:12px;
+}
 
-    .side-menu.open {
-      left: 0;
-    }
+/* GRID */
+.grid {
+  display:grid;
+  grid-template-columns: repeat(3,1fr);
+  gap:12px;
+  margin-top:15px;
+}
 
-    .menu-item {
-      margin: 15px 0;
-      cursor: pointer;
-      font-size: 16px;
-    }
+/* CARD */
+.card {
+  background:#0a0a0a;
+  border:1px solid rgba(0,255,150,0.4);
+  border-radius:12px;
+  padding:12px;
+  box-shadow:0 0 15px rgba(0,255,150,0.1);
+}
 
-    .container {
-      padding: 15px;
-      max-width: 500px;
-      margin: auto;
-    }
+/* GLOW */
+.glow {
+  color:#00ff88;
+}
 
-    h1 {
-      color: #00F0FF;
-      font-size: 18px;
-    }
+/* CIRCLE */
+.circle {
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  border:6px solid #00ff88;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+  margin:auto;
+}
 
-    .card {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(0,255,255,0.2);
-      border-radius: 10px;
-      padding: 12px;
-      margin-top: 12px;
-    }
+/* BOTTOM */
+.bottom {
+  display:grid;
+  grid-template-columns: 2fr 1fr;
+  gap:12px;
+  margin-top:15px;
+}
 
-    /* CHART */
-    .chart-wrapper {
-      position: relative;
-      margin-top: 10px;
-    }
+/* HEATMAP */
+.heatmap {
+  height:150px;
+  background:linear-gradient(90deg, blue, purple, red);
+  border-radius:8px;
+}
 
-    .expand-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: #00F0FF;
-      border: none;
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 12px;
-      z-index: 10;
-    }
+/* FEED */
+.feed {
+  max-height:150px;
+  overflow:auto;
+}
 
-    .fullscreen {
-      position: fixed !important;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #000;
-      z-index: 9999;
-      padding: 10px;
-    }
+/* ALERT */
+.alert {
+  padding:6px;
+  border-bottom:1px solid #0f3;
+}
 
-    .fullscreen #tv_chart {
-      height: 90vh !important;
-    }
+/* BUTTON */
+.btn {
+  background:#00ff88;
+  color:#000;
+  padding:6px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  margin-top:5px;
+}
 
-    #tv_chart {
-      width: 100%;
-      height: 300px;
-    }
-
-    p {
-      font-size: 14px;
-      margin: 5px 0;
-    }
-  </style>
+/* MOBILE */
+@media(max-width:700px){
+  .sidebar {
+    position:relative;
+    width:100%;
+    height:auto;
+  }
+  .main {
+    margin-left:0;
+  }
+  .grid, .bottom {
+    grid-template-columns:1fr;
+  }
+}
+</style>
 </head>
 
 <body>
-  <div id="root"></div>
 
-  <script type="text/babel">
+<div class="sidebar">
+  <div class="logo">🧠 PeFi</div>
+  <div class="slogan">Intelligence That Executes.</div>
 
-    const { useState, useEffect } = React;
+  <div class="menu-item">Dashboard</div>
+  <div class="menu-item">AI Signals</div>
+  <div class="menu-item">Market Scanner</div>
+  <div class="menu-item">Whale Intelligence</div>
+  <div class="menu-item">Liquidation Heatmap</div>
+  <div class="menu-item">Portfolio</div>
+  <div class="menu-item">Backtesting</div>
+  <div class="menu-item">Alerts</div>
+</div>
 
-    function Chart() {
-      const [expanded, setExpanded] = useState(false);
+<div class="main">
 
-      useEffect(() => {
-        const container = document.getElementById("tv_chart");
-        if (container) container.innerHTML = "";
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat">Win Rate<br><b class="glow">68%</b></div>
+    <div class="stat">RR<br><b class="glow">3.2:1</b></div>
+    <div class="stat">Signals<br><b class="glow">124</b></div>
+    <div class="stat">Drawdown<br><b style="color:red">-6.2%</b></div>
+    <div class="stat">Profit Factor<br><b class="glow">2.48</b></div>
+  </div>
 
-        setTimeout(() => {
-          new TradingView.widget({
-            container_id: "tv_chart",
-            symbol: "BINANCE:BTCUSDT",
-            interval: "15",
-            theme: "dark",
-            width: "100%",
-            height: expanded ? 600 : 300
-          });
-        }, 100);
-      }, [expanded]);
+  <!-- TOP TRADES -->
+  <div class="grid">
 
-      return (
-        <div className={`chart-wrapper ${expanded ? "fullscreen" : ""}`}>
-          <button className="expand-btn" onClick={() => setExpanded(!expanded)}>
-            {expanded ? "Close" : "Expand"}
-          </button>
-          <div id="tv_chart"></div>
-        </div>
-      );
-    }
+    <div class="card">
+      <h3>XRP/USDT</h3>
+      <div class="circle">91%</div>
+      <p>Entry: 0.61</p>
+      <p>Stop: <span style="color:red">0.58</span></p>
+      <p>Target: 0.67+</p>
+      <button class="btn">View Chart</button>
+    </div>
 
-    function App() {
+    <div class="card">
+      <h3>SOL/USDT</h3>
+      <div class="circle">88%</div>
+      <p>Entry: 175</p>
+      <p>Stop: <span style="color:red">167</span></p>
+      <p>Target: 195+</p>
+      <button class="btn">View Chart</button>
+    </div>
 
-      const [menuOpen, setMenuOpen] = useState(false);
-      const [page, setPage] = useState("dashboard");
-      const [data, setData] = useState({});
+    <div class="card">
+      <h3>LINK/USDT</h3>
+      <div class="circle">86%</div>
+      <p>Entry: 17.2</p>
+      <p>Stop: <span style="color:red">16.4</span></p>
+      <p>Target: 20.6+</p>
+      <button class="btn">View Chart</button>
+    </div>
 
-      useEffect(() => {
-        const interval = setInterval(() => {
-          setData({
-            bestTrade: {
-              symbol: "SOL",
-              confidence: Math.floor(Math.random() * 30) + 60
-            },
-            narrative: "PeFi detects strong bullish momentum forming.",
-          });
-        }, 2000);
+  </div>
 
-        return () => clearInterval(interval);
-      }, []);
+  <!-- LOWER PANELS -->
+  <div class="bottom">
 
-      return (
-        <div>
+    <div class="card">
+      <h3>🧠 AI Signal Status</h3>
+      <p>Confidence: <b class="glow" id="confidence">92%</b></p>
+      <p>Structure: Strong</p>
+      <p>Volume: High</p>
+      <p>Momentum: Bullish</p>
+    </div>
 
-          {/* NAV */}
-          <div className="nav">
-            <span className="menu-btn" onClick={() => setMenuOpen(true)}>☰</span>
-            <h1>🧠 PeFi</h1>
-            <span></span>
-          </div>
+    <div class="card">
+      <h3>Market Condition</h3>
+      <h2 class="glow" id="market">BULLISH</h2>
+      <p>Trend: Uptrend</p>
+      <p>Liquidity: High</p>
+    </div>
 
-          {/* SIDE MENU */}
-          <div className={`side-menu ${menuOpen ? "open" : ""}`}>
-            <h2>Menu</h2>
+  </div>
 
-            <div className="menu-item" onClick={() => {setPage("dashboard"); setMenuOpen(false);}}>Dashboard</div>
-            <div className="menu-item" onClick={() => {setPage("signals"); setMenuOpen(false);}}>Signals</div>
-            <div className="menu-item" onClick={() => {setPage("settings"); setMenuOpen(false);}}>Settings</div>
-          </div>
+  <!-- EXTRA -->
+  <div class="grid">
 
-          {/* CONTENT */}
-          <div className="container">
+    <div class="card">
+      <h3>Whale Intelligence</h3>
+      <p>Net Inflow: +12.4M</p>
+      <p>Wallet Win Rate: 78%</p>
+      <p>Hold Time: 18 days</p>
+    </div>
 
-            {page === "dashboard" && (
-              <>
-                <Chart />
+    <div class="card">
+      <h3>Liquidation Heatmap</h3>
+      <div class="heatmap"></div>
+    </div>
 
-                <div className="card">
-                  <h2>Best Trade</h2>
-                  <p>{data?.bestTrade?.symbol}</p>
-                  <p>{data?.bestTrade?.confidence}%</p>
-                </div>
+    <div class="card">
+      <h3>⚡ Alerts</h3>
+      <div class="feed" id="alerts"></div>
+    </div>
 
-                <div className="card">
-                  <h2>AI Narrative</h2>
-                  <p>{data?.narrative}</p>
-                </div>
-              </>
-            )}
+  </div>
 
-            {page === "signals" && (
-              <div className="card">
-                <h2>Signals</h2>
-                <p>AI signals will appear here</p>
-              </div>
-            )}
+</div>
 
-            {page === "settings" && (
-              <div className="card">
-                <h2>Settings</h2>
-                <p>Preferences, alerts, themes</p>
-              </div>
-            )}
+<script>
+setInterval(()=>{
+  const alerts = document.getElementById("alerts");
+  const el = document.createElement("div");
+  el.className = "alert";
+  el.innerText = new Date().toLocaleTimeString() + " — Signal update";
+  alerts.prepend(el);
 
-          </div>
+  // Simulate changing confidence
+  const conf = Math.floor(Math.random()*20)+75;
+  document.getElementById("confidence").innerText = conf + "%";
 
-        </div>
-      );
-    }
+},3000);
+</script>
 
-    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
-
-  </script>
 </body>
 </html>
